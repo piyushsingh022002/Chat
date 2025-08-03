@@ -23,12 +23,6 @@ export const sendMessage = async (message: string) => {
   }
 };
 
-export const joinRoom = async (room: string) => {
-  if (connection) {
-    await connection.invoke("JoinRoom", room);
-  }
-};
-
 export const onMessageReceived = (cb: (user: string, message: string) => void) => {
   if (connection) {
     connection.on("ReceiveMessage", cb);
