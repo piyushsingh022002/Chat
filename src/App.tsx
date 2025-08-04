@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./contexts/AuthContext";
 import ChatRoom from "./components/ChatRoom";
 import Login from "./components/Login";
@@ -7,27 +7,32 @@ import GlobalStyle from "./styles/GlobalStyles";
 
 export default function App() {
   const { token } = useAuth();
-  const [mode, setMode] = useState<"login" | "register">("login");
-
-  if (token) return <ChatRoom />;
 
   return (
     <>
       <GlobalStyle />
-      {mode === "login" ? <Login /> : <Register />}
-      <p style={{ textAlign: "center", marginTop: "1rem" }}>
-        {mode === "login" ? (
-          <span>
-            Don't have an account?{" "}
-            <button onClick={() => setMode("register")}>Register</button>
-          </span>
-        ) : (
-          <span>
-            Already registered?{" "}
-            <button onClick={() => setMode("login")}>Login</button>
-          </span>
-        )}
-      </p>
+      <Routes>
+        <Route
+          path="/"
+          element={<Navigate to={token ? "/chat" : "/login"} />}
+        />
+        <Route
+          path="/chat"
+          element={token ? <ChatRoom /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/login"
+          element={token ? <Navigate to="/chat" /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={token ? <Navigate to="/chat" /> : <Register />}
+        />
+        <Route
+          path="*"
+          element={<p style={{ textAlign: "center" }}>404 - Page not found</p>}
+        />
+      </Routes>
     </>
   );
 }
