@@ -5,7 +5,12 @@ import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`
+display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 2rem 2rem;
 `;
 
 const Input = styled.input`
@@ -13,9 +18,15 @@ const Input = styled.input`
   margin: 0.5rem 0;
   display: block;
   width: 100%;
+  border:none;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
 `;
 
 const Button = styled.button`
+disaply: flex;
+  width: 35%;
   padding: 0.6rem 1rem;
   background-color: #0077ff;
   color: white;
