@@ -1,13 +1,29 @@
 import * as signalR from "@microsoft/signalr";
 
-let connection: signalR.HubConnection;
+let connection: signalR.HubConnection | null = null;
 
-export const connectToChat = async (token: string) => {
+
+export const connectToChat = async (
+  token: string,
+  onReceive: (user: string, msg: string) => void,
+  onJoin: (user: string) => void,
+  onLeave: (user: string) => void
+) => {
+  if (connection) {
+    connection.off("ReceiveMessage");
+    connection.off("UserJoined");
+    connection.off("UserLeft");
+  }
+
   connection = new signalR.HubConnectionBuilder()
     .withUrl(`${process.env.REACT_APP_SIGNALR_URL}?access_token=${token}`)
     .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Information)
     .build();
+
+  connection.on("ReceiveMessage", onReceive);
+  connection.on("UserJoined", onJoin);
+  connection.on("UserLeft", onLeave);
 
   connection.onclose((e) => {
     console.warn("SignalR disconnected", e);
@@ -17,26 +33,11 @@ export const connectToChat = async (token: string) => {
   console.log("SignalR connected");
 };
 
+
 export const sendMessage = async (message: string) => {
-  if (connection) {
+  if (connection?.state === signalR.HubConnectionState.Connected) {
     await connection.invoke("SendMessage", message);
-  }
-};
-
-export const onMessageReceived = (cb: (user: string, message: string) => void) => {
-  if (connection) {
-    connection.on("ReceiveMessage", cb);
-  }
-};
-
-export const onUserJoined = (cb: (user: string) => void) => {
-  if (connection) {
-    connection.on("UserJoined", cb);
-  }
-};
-
-export const onUserLeft = (cb: (user: string) => void) => {
-  if (connection) {
-    connection.on("UserLeft", cb);
+  } else {
+    console.warn("🚫 SignalR not connected");
   }
 };

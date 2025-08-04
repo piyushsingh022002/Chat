@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import api from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   padding: 2rem;
@@ -65,6 +66,10 @@ export default function Register() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <Button onClick={handleRegister}>Register</Button>
+      <p style={{ marginTop: "1rem" }}>
+  Already have an account? <Link to="/login">Login</Link>
+</p>
+
     </Container>
   );
 }
